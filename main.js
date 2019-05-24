@@ -133,13 +133,13 @@ async function main() {
 
                     if (app.premium == false) {
                         try {
-                            var [downloadLink, filename] = await getApkLink(app);
+                            var [downloadLink, filename] = await getApkLink(app).then(new Error());
                             download(downloadLink, "./downloads/" + appTitle + "/", filename).then(() => {
                                 running = running - 1;
                                 archive[app.uuid] = true;
                                 fs.writeFileSync("archive.json", JSON.stringify(archive));
                             })
-                        } catch{ }
+                        } catch{ running = running - 1; }
                     } else {
                         running = running - 1;
                         archive[app.uuid] = true;
