@@ -9,6 +9,10 @@ var argv = require('minimist')(process.argv.slice(2), {
     alias: { h: 'help', t: "threads", a: "apk,", p: "premium", f: "fresh" },
     default: { t: '5' },
 });
+let archive = {};
+if (fs.existsSync("archive.json")) {
+    archive = JSON.parse(fs.readFileSync("archive.json"));
+}
 
 const getApps = async () => {
     try {
@@ -73,7 +77,7 @@ async function downloadAsync(link, path, filename) {
 
 async function download(link, path, filename) {
     try {
-        return new Promise(async resolve => {
+        return new Promise(async (resolve, reject) => {
 
             try {
 
@@ -88,10 +92,6 @@ async function download(link, path, filename) {
                 })
 
                 dl.on('error', (err) => {
-                    //dl.stop();
-                    //console.log(err)
-                    //console.log("Error")
-                    //console.log(link)
                 })
 
                 await dl.start();
@@ -99,6 +99,7 @@ async function download(link, path, filename) {
             } catch (error) {
 
                 console.error("Error downloading " + link)
+                reject();
 
             }
         })
@@ -118,7 +119,7 @@ async function main() {
         if (running < limit) {
             app = apps.apps[x]
             x++;
-            if (app.premium == false || argv.p) {
+            if ((app.premium == false || argv.p) && !archive[app.uuid]) {
                 running++;
                 console.log("Downloading: " + app.title);
                 try {
@@ -135,8 +136,14 @@ async function main() {
                             var [downloadLink, filename] = await getApkLink(app);
                             download(downloadLink, "./downloads/" + appTitle + "/", filename).then(() => {
                                 running = running - 1;
+                                archive[app.uuid] = true;
+                                fs.writeFileSync("archive.json", JSON.stringify(archive));
                             })
                         } catch{ }
+                    } else {
+                        running = running - 1;
+                        archive[app.uuid] = true;
+                        fs.writeFileSync("archive.json", JSON.stringify(archive));
                     }
                 } catch (error) { }
             }
@@ -151,7 +158,7 @@ if (argv.h) {
     OuyaArchiver v1
 
     Options:
-        -t, --threads      set number of threads (default: 5)
+        -t x, --threads x  set number of threads to x (default: 5)
         -a, --apk          only download the APKs
         -f, --fresh        use app list from the web, instead of the included one (adds a delay when starting)
         -p, --premium      additionally downloads the info and screenshots of premium games, but not the APKs
