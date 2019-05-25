@@ -122,9 +122,8 @@ async function main() {
                     archive[app.uuid] = true;
                     fs.writeFileSync("archive.json", JSON.stringify(archive));
                 }
-            } catch (error) { console.log(error) }
+            } catch (error) { console.log(error.message) }
         } else { }
-        if (cb) cb();
     }, (err) => {
         console.error(err)
     })
