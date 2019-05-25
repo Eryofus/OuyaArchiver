@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^3.0.0",
     "filenamify": "^4.0.0",
     "minimist": "^1.2.0",
     "node-downloader-helper": "^1.0.10",
