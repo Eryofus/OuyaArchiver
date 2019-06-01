@@ -126,7 +126,7 @@ async function main() {
 
 if (argv.h) {
     console.log(`
-    OuyaArchiver v1.1
+    OuyaArchiver v1.2
 
     Options:
         -t x, --threads x  set number of threads to x (default: 5)
