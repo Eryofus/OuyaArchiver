@@ -3,6 +3,7 @@ var request = require('request-promise-native');
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
+var mkdirp = require('mkdirp');
 const asyn = require('async');
 const { DownloaderHelper } = require('node-downloader-helper');
 const filenamify = require('filenamify');
@@ -56,9 +57,9 @@ function download(link, path, filename) {
 
         try {
 
-            await fs.mkdirSync(path, { recursive: true }, (err) => {
-                if (err) throw err;
-            });
+
+
+            await mkdirp.sync(path);
 
             const dl = new DownloaderHelper(link, path, { fileName: filename, override: true });
 
