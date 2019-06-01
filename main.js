@@ -23,10 +23,6 @@ const getApps = async () => {
     }
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function getApkLink(app) {
     let downloadLink
 
