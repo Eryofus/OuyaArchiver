@@ -41,19 +41,12 @@ async function getApkLink(app) {
     }
 }
 
-async function downloadScreenshots(app) {
-    let appJSON
-
-    try {
-        appJSON = await request.get("https://devs.ouya.tv/api/v1/apps/" + app.uuid);
-    } catch (error) {
-        throw error
-    }
+async function downloadScreenshots(appJSON, path) {
 
     let screenshots = JSON.parse(appJSON).app.filepickerScreenshots
 
     for (scr in screenshots) {
-        await download(screenshots[scr], "./downloads/" + app.title + "/screenshots/", "screenshot" + scr + ".jpg")
+        await download(screenshots[scr], path, "screenshot" + scr + ".jpg")
     }
 
 }
@@ -101,10 +94,14 @@ async function main() {
             try {
                 const appTitle = await filenamify(app.title, { replacement: '_' });
                 if (!argv.a) {
-                    await download("https://devs.ouya.tv/api/v1/apps/" + app.uuid, "./downloads/" + appTitle, "info.json")
                     if (app.mainImageFullUrl != null) await download(app.mainImageFullUrl, "./downloads/" + appTitle, "mainImage.png")
                     if (app.heroImage != null) await download(app.heroImage, "./downloads/" + appTitle, "heroImage.jpg")
-                    await downloadScreenshots(app)
+
+                    let appJSON
+                    appJSON = await request.get("https://devs.ouya.tv/api/v1/apps/" + app.uuid);
+                    fs.writeFileSync("./downloads/" + appTitle + "/info.json", appJSON);
+
+                    await downloadScreenshots(appJSON, "./downloads/" + appTitle + "/screenshots/")
                 }
 
                 if (app.premium == false) {
