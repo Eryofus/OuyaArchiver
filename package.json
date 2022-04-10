@@ -11,7 +11,7 @@
   "dependencies": {
     "async": "^3.0.0",
     "filenamify": "^4.0.0",
-    "minimist": "^1.2.3",
+    "minimist": "^1.2.6",
     "mkdirp": "^0.5.1",
     "node-downloader-helper": "^1.0.10",
     "request": "^2.88.0",
